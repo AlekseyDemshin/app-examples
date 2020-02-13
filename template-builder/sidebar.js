@@ -18,9 +18,9 @@ async function updateList() {
         type: 'sticker'
     });
     widgets = widgets
-        .filter(w => w.x > 0 && w.x < 1200 && w.y > 0 && w.y < 800)
+        .filter(w => w.x > 0 && w.x < 1000 && w.y > 0 && w.y < 1000)
         .map(w => {
-            w.ieRatio = (800 + 1 - w.y) / (w.x + 1 - 0);
+            w.ieRatio = (1000 + 1 - w.y) / (w.x + 1 - 0);
             return w;
         })
         .sort((l, r) => r.ieRatio - l.ieRatio);
@@ -74,10 +74,23 @@ function createTable(title, emptyText, data) {
 
 
 const colors = ['#F5F6F8', '#FFF9B2', '#F5D22B', '#FFA75B', '#F38090'];
-
+const ranges = [0.25, 0.416, 0.66, 0.75, 1]
 function paint() {
     const step = 1 / colors.length;
-    widgets.forEach(w => w.style.stickerBackgroundColor = colors[Math.ceil(w.ieRatioNormalized / step) - 1])
+    widgets.forEach(w => {
+        let length = ((1000 - w.y) - w.x) / 2;
+        length = Math.sqrt(2) * 500 + length;
+        length /= Math.sqrt(2)*1000;
+        let index = 4;
+        for (let i=0; i< ranges.length; i++) {
+            if (ranges[i] > length) {
+                index = i;
+                break;
+            }
+        }
+        //let index = Math.ceil((Math.sqrt(2) * 500 + length) / (Math.sqrt(2)*1000 / 4)) - 1;
+        w.style.stickerBackgroundColor = colors[index]
+    });
     miro.board.widgets.update(widgets);
 }
 
