@@ -3,8 +3,6 @@ miro.onReady(() => {
     miro.addListener(miro.enums.event.WIDGETS_CREATED, updateList)
     miro.addListener(miro.enums.event.WIDGETS_DELETED, updateList)
     //miro.addListener(miro.enums.event.WIDGETS_TRANSFORMATION_UPDATED, updateList)
-
-    updateList()
 })
 
 const rowHeight = 100
@@ -18,6 +16,6 @@ function drawTemplate() {
 }
 
 function updateList() {
-    alert('updateList')
+    console.log('updateList')
 }
 
