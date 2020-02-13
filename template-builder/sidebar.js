@@ -1,66 +1,74 @@
 miro.onReady(() => {
-    miro.addListener('WIDGETS_CREATED', updateList)
-    miro.addListener('WIDGETS_DELETED', updateList)
-    miro.addListener('WIDGETS_TRANSFORMATION_UPDATED', updateList)
+    miro.addListener('WIDGETS_CREATED', onCreateOrUpdate);
+    miro.addListener('WIDGETS_TRANSFORMATION_UPDATED', onCreateOrUpdate);
+    miro.addListener('WIDGETS_DELETED', onDelete);
 
-    updateList()
-})
+    refreshAll();
+});
 
 function drawTemplate() {
     createMatrix()
 }
 
-let widgets = [];
-
-async function updateList() {
-    console.log("collect")
-    widgets = await miro.board.widgets.get({
-        type: 'sticker'
-    });
-    widgets = widgets
-        .filter(w => w.x > 0 && w.x < 1000 && w.y > 0 && w.y < 1000)
-        .map(w => {
-            w.ieRatio = (1000 + 1 - w.y) / (w.x + 1 - 0);
-            return w;
-        })
-        .sort((l, r) => r.ieRatio - l.ieRatio);
-
-    //normalize
-    if (widgets.length > 0) {
-        const maxRatio = widgets[0].ieRatio;
-        widgets.forEach(w => w.ieRatioNormalized = w.ieRatio / maxRatio);
-    }
-
-    console.log(widgets)
-    createTable("Results", "Looks like the matrix is empty. Drag stickers into it", widgets)
+async function onCreateOrUpdate() {
+    await refreshAll();
 }
 
-function createTable(title, emptyText, data) {
+function onDelete(e) {
+    removeFromTable(e.data);
+}
+
+async function getAllWidgetsInMatrix() {
+    let widgets = await miro.board.widgets.get({type: 'sticker'});
+    widgets = widgets.filter(w => w.x > 0 && w.x < 1000 && w.y > 0 && w.y < 1000);
+    return widgets;
+}
+
+async function refreshAll() {
+    let widgets = await getAllWidgetsInMatrix();
+    calcIERatio(widgets);
+    widgets.sort((l, r) => r.ieRatioNormalized - l.ieRatioNormalized);
+    createTable(widgets);
+}
+
+function calcIERatio(widgets) {
+    widgets
+        .forEach(w => {
+            let distance = ((1000 - w.y) - w.x) / 2; // distance from the widget to the line where impact = effort
+            distance = Math.sqrt(2) * 500 + distance; // distance from the point (x;x) to the right bottom corner
+            distance /= Math.sqrt(2) * 1000; // normalize
+            w.ieRatioNormalized = distance;
+        });
+}
+
+function createTable(widgets) {
     const container = document.getElementById("stat-container");
+    // clear old
     while (container.firstChild) {
         container.removeChild(container.firstChild);
     }
 
-    const statView = document.createElement("div")
-    statView.className = "stat-list__table"
+    const statView = document.createElement("div");
+    statView.id = "stat-list__table";
+    statView.className = "stat-list__table";
 
     const titleView = document.createElement("div");
     titleView.className = "stat-list__title";
-    titleView.innerHTML = `<span>${title}</span>`;
+    titleView.innerHTML = `<span>Results</span>`;
     statView.appendChild(titleView);
 
-    if (data.size === 0) {
-        const emptyView = document.createElement('div')
-        emptyView.className = "stat-list__empty"
-        emptyView.innerText = emptyText
+    if (widgets.length === 0) {
+        const emptyView = document.createElement('div');
+        emptyView.className = "stat-list__empty";
+        emptyView.innerText = "Looks like the matrix is empty. Drag stickers into it";
         statView.appendChild(emptyView);
     } else {
-        data.forEach(w => {
+        widgets.forEach(w => {
             let itemView = document.createElement("div");
+            itemView.id = "stat-list__item_" + w.id;
             itemView.className = "stat-list__item";
             itemView.innerHTML = `<span class="stat-list__item-name">${w.text} | </span>`
-                + `<span class="stat-list__item-value">${w.ieRatioNormalized} | </span>`
-                + `<span class="stat-list__item-value">${Math.ceil(w.ieRatioNormalized / 0.2) - 1}</span>`;
+                + `<span class="stat-list__item-value">${w.ieRatioNormalized}</span>`;
             itemView.onclick = function () {
                 miro.board.selection.clear();
                 miro.board.selection.selectWidgets(w.id);
@@ -72,25 +80,50 @@ function createTable(title, emptyText, data) {
     container.appendChild(statView);
 }
 
-
-const colors = ['#F5F6F8', '#FFF9B2', '#F5D22B', '#FFA75B', '#F38090'];
-const ranges = [0.25, 0.416, 0.66, 0.75, 1]
-function paint() {
-    const step = 1 / colors.length;
+function removeFromTable(widgets) {
+    // const container = document.getElementById("stat-container");
+    // const statView = container.getElementById("stat-list__table");
     widgets.forEach(w => {
-        let length = ((1000 - w.y) - w.x) / 2;
-        length = Math.sqrt(2) * 500 + length;
-        length /= Math.sqrt(2)*1000;
+            let item = document.getElementById("stat-list__item_" + w.id);
+            if (item != null) {
+                item.remove();
+            }
+        }
+    );
+
+    // add tip if there is no widgets in the list
+    const statView = document.getElementById("stat-list__table");
+    if (statView.getElementsByClassName("stat-list__item").length === 0) {
+        const emptyView = document.createElement('div');
+        emptyView.className = "stat-list__empty";
+        emptyView.innerText = "Looks like the matrix is empty. Drag stickers into it";
+        statView.appendChild(emptyView);
+    }
+}
+
+
+const colors = ['#f5f6f8', '#fff9b2', '#f5d22b', '#ffa75b', '#f38090'];
+const ranges = [0.3, 0.42, 0.57, 0.7, 1];
+
+async function paint() {
+    let widgetsToUpdate = [];
+    let widgets = await getAllWidgetsInMatrix();
+    calcIERatio(widgets);
+    // update only widgets with a changed color
+    widgets.forEach(w => {
         let index = 4;
-        for (let i=0; i< ranges.length; i++) {
-            if (ranges[i] > length) {
+        for (let i = 0; i < ranges.length; i++) {
+            if (ranges[i] > w.ieRatioNormalized) {
                 index = i;
                 break;
             }
         }
-        //let index = Math.ceil((Math.sqrt(2) * 500 + length) / (Math.sqrt(2)*1000 / 4)) - 1;
-        w.style.stickerBackgroundColor = colors[index]
+        if (w.style.stickerBackgroundColor.toLowerCase() !== colors[index]) {
+            w.style.stickerBackgroundColor = colors[index];
+            widgetsToUpdate.push(w);
+        }
     });
-    miro.board.widgets.update(widgets);
+
+    await miro.board.widgets.update(widgetsToUpdate);
 }
 
