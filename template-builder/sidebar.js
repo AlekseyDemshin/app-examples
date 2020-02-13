@@ -11,10 +11,8 @@ miro.onReady(() => {
 const tipElement = document.getElementById('tip')
 const widgetTextElement = document.getElementById('widget-text')
 
-document.getElementById("build").addEventListener("click", () => drawTemplate())
-
 function drawTemplate() {
-    alert('drawTemplate')
+  createMatrix()
 }
 
 function updateList() {

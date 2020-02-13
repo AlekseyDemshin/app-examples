@@ -7,11 +7,11 @@ function run() {
   miro.initialize({
     extensionPoints: {
       bottomBar: {
-        title: 'IE',
+        title: 'IE-a0.0.1',
         svgIcon: icon,
         positionPriority: 1,
         onClick: () => {
-          miro.board.ui.openLeftSidebar('sidebar.html')
+          miro.board.ui.openLeftSidebar('sidebar.html');
         }
       }
     }
