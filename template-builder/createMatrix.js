@@ -3,13 +3,13 @@ async function createMatrix() {
     const topY = 0;
 
     const zeroVertX = 0;
-    const zeroVertY = 805;
+    const zeroVertY = 1005;
 
     const zeroHorX = -5;
-    const zeroHorY = 800;
+    const zeroHorY = 1000;
 
-    const rightX = 1200;
-    const rightY = 800;
+    const rightX = 1000;
+    const rightY = 1000;
 
     moveViewPort(-200, -100, rightX + 300, rightY + 300);
     drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, rightX, rightY)
