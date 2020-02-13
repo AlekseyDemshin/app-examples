@@ -15,7 +15,9 @@ async function updateList() {
     let widgets = await miro.board.widgets.get({
         type: 'sticker'
     });
-    widgets = widgets.filter(w => w.x > 0 && w.x < 1200 && w.y > 0 && w.y < 800)
+    widgets = widgets
+        .filter(w => w.x > 0 && w.x < 1200 && w.y > 0 && w.y < 800)
+        .sort((l,r) => (800 - l.y) / (l.x - 0) - (800 - r.y) / (r.x - 0))
 
     console.log(widgets)
     createTable("Results", "Looks like the matrix is empty. Drag stickers into it", widgets)
@@ -44,8 +46,8 @@ function createTable(title, emptyText, data) {
         data.forEach(w => {
             let itemView = document.createElement("div");
             itemView.className = "stat-list__item";
-            itemView.innerHTML = `<span class="stat-list__item-name">${w.text}</span>`
-                // + `<span class="stat-list__item-value">${w.text}</span>`;
+            itemView.innerHTML = `<span class="stat-list__item-name">${w.text} |</span>`
+                 + `<span class="stat-list__item-value">${(800 - w.y) / (w.x - 0)}</span>`;
             statView.appendChild(itemView)
         })
     }
