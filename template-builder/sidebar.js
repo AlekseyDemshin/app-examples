@@ -120,7 +120,7 @@ function createTable(matrix, widgets) {
                 + `<span class="stat-list__item-name">${w.text}</span>`;
             itemView.onclick = async function () {
                 moveViewPort(matrix.leftTop.x - 200, matrix.leftTop.y - 100,
-                    matrix.rightBottom.x - matrix.leftTop.x + 300, matrix.rightBottom.y - matrix.rightBottom.y + 300);
+                    matrix.rightBottom.x - matrix.leftTop.x + 300, matrix.rightBottom.y - matrix.leftTop.y + 300);
                 await miro.board.selection.clear();
                 await miro.board.selection.selectWidgets(w.id);
             };
