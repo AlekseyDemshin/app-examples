@@ -50,7 +50,7 @@ function run() {
     miro.initialize({
         extensionPoints: {
             bottomBar: {
-                title: 'IE-a0.0.1',
+                title: 'Priority matrix app',
                 svgIcon: icon,
                 positionPriority: 1,
                 onClick: () => {

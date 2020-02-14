@@ -14,6 +14,8 @@
             min-width: 0;
             min-height: 0;
             height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .sidebar__header {
@@ -24,15 +26,58 @@
         }
 
         .miro-btn {
-            display: inline;
-            margin-left: 16px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stat-list {
+            height: 100%;
+            overflow: auto;
+        }
+
+        .stat-list__title {
+            font-size: 18px;
+            position: relative;
+            box-sizing: border-box;
+            padding: 0 24px;
+            margin: 12px;
+            cursor: pointer;
+        }
+
+        .stat-list__item {
+            font-size: 14px;
+            position: relative;
+            box-sizing: border-box;
+            padding-top: 16px;
+            margin: 0 24px;
+            cursor: pointer;
+        }
+        .stat-list__item:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+
+        .sidebar-list-item__border {
+            border-bottom: 1px solid #050038;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            opacity: 0.16;
+            width: 100%;
+        }
+
+        .stat-list__empty {
+            margin: 24px 24px 24px;
+            opacity: 0.4;
+            font-size: 16px;
+            text-align: center;
+            color: #000;
         }
     </style>
 </head>
 
 <body>
 <div class="sidebar__container">
-    <div class="sidebar__header">Impact-effort plugin</div>
+    <div class="sidebar__header">Priority matrix</div>
     <div class="sidebar__buttons" id="buttons-block"></div>
     <div id="stat-container" class="stat-list"></div>
 </div>

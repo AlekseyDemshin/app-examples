@@ -19,6 +19,7 @@ async function init() {
     setInterval(refreshAll, 1000);
 }
 
+
 async function drawTemplate() {
     // delete old matrix
     await createMatrix()
@@ -100,13 +101,14 @@ function createTable(matrix, widgets) {
 
     const titleView = document.createElement("div");
     titleView.className = "stat-list__title";
-    titleView.innerHTML = `<span>Results</span>`;
+    titleView.innerHTML = `<span>Tasks:</span>`;
     statView.appendChild(titleView);
 
+    let itemViewIds = [];
     if (widgets.length === 0) {
         const emptyView = document.createElement('div');
         emptyView.className = "stat-list__empty";
-        emptyView.innerText = "Looks like the matrix is empty. Drag stickers into it";
+        emptyView.innerText = "Fill the matrix with stickers to get a prioritised list of items";
         statView.appendChild(emptyView);
     } else {
         widgets.forEach((w, index) => {
@@ -114,9 +116,8 @@ function createTable(matrix, widgets) {
             itemView.id = "stat-list__item_" + w.id;
             itemView.className = "stat-list__item";
             itemView.innerHTML =
-                `<span class="stat-list__item-num">${index + 1} | </span>`
-                + `<span class="stat-list__item-name">${w.text} | </span>`
-                + `<span class="stat-list__item-value">${w.ieRatioNormalized}</span>`;
+                `<span class="stat-list__item-num"><b>${index + 1}.</b> </span>`
+                + `<span class="stat-list__item-name">${w.text}</span>`;
             itemView.onclick = async function () {
                 moveViewPort(matrix.leftTop.x - 200, matrix.leftTop.y - 100,
                     matrix.rightBottom.x - matrix.leftTop.x + 300, matrix.rightBottom.y - matrix.rightBottom.y + 300);
@@ -124,9 +125,19 @@ function createTable(matrix, widgets) {
                 await miro.board.selection.selectWidgets(w.id);
             };
             statView.appendChild(itemView)
+            itemViewIds.push(itemView.id)
         })
     }
     container.appendChild(statView);
+    itemViewIds.forEach((itemID, index) => {
+        addElement(
+            itemID,
+            'div',
+            itemID + '_border',
+            'sidebar-list-item__border',
+            '',
+            '');
+    })
 }
 
 async function removeFromTable(widgets) {
@@ -152,7 +163,7 @@ async function removeFromTable(widgets) {
         if (statView.getElementsByClassName("stat-list__item").length === 0) {
             const emptyView = document.createElement('div');
             emptyView.className = "stat-list__empty";
-            emptyView.innerText = "Looks like the matrix is empty. Drag stickers into it";
+            emptyView.innerText = "Fill the matrix with stickers to get a prioritised list of items";
             statView.appendChild(emptyView);
         } else {
             let num = 1;
