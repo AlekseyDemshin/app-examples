@@ -18,7 +18,7 @@ function drawPaint() {
 }
 
 function drawBuildButton() {
-    let onClick = 'drawTemplate(); deleteElement("build"); drawPaintButton(); drawExportButton()';
+    let onClick = 'drawTemplate(); deleteElement("build"); /*drawPaintButton();*/ drawExportButton()';
     addElement(
         'buttons-block',
         'button',

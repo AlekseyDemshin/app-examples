@@ -96,7 +96,7 @@ async function drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, ri
                 lineThickness: 4
             },
             metadata: {
-                appId: {
+                [appId]: {
                     axis: 'vertical'
                 }
             }
@@ -112,7 +112,7 @@ async function drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, ri
                 lineThickness: 4
             },
             metadata: {
-                appId: {
+                [appId]: {
                     axis: 'horizontal'
                 }
             }

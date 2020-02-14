@@ -1,7 +1,15 @@
+let matrix;
 miro.onReady(() => {
     miro.addListener('WIDGETS_CREATED', onCreateOrUpdate);
     miro.addListener('WIDGETS_TRANSFORMATION_UPDATED', onCreateOrUpdate);
     miro.addListener('WIDGETS_DELETED', onDelete);
+
+    matrix = findMatrix();
+    if (matrix == null) {
+        drawBuildButton();
+    } else {
+        drawExportButton();
+    }
 
     refreshAll();
 
@@ -22,7 +30,7 @@ function onDelete(e) {
 }
 
 async function findMatrix() {
-    const appId = await miro.clientId();
+    const appId = await miro.getClientId();
     let axises = (await miro.board.widgets.get({type: 'line'}))
         .filter(w => w.metadata[appId] != null && w.metadata[appId].axis != null);
     if (axises.length !== 2) {
@@ -30,10 +38,19 @@ async function findMatrix() {
     }
     let result = {};
     axises.forEach(w => {
-        if (w.metadata[appId].axis === 'horizontal') {
-
+        if (w.metadata[appId].axis === 'vertical') {
+            result.leftTop = {};
+            result.leftTop.x = w.bounds.left;
+            result.leftTop.y = w.bounds.top;
         }
-    })
+        if (w.metadata[appId].axis === 'horizontal') {
+            result.rightBottom = {};
+            result.rightBottom.x = w.bounds.right;
+            result.rightBottom.y = w.bounds.bottom;
+        }
+    });
+    // console.log(result);
+    return result;
 }
 
 async function getAllWidgetsInMatrix() {
@@ -43,9 +60,13 @@ async function getAllWidgetsInMatrix() {
 }
 
 async function refreshAll() {
+    if (matrix == null) {
+        return;
+    }
     let widgets = await getAllWidgetsInMatrix();
     calcIERatio(widgets);
     widgets.sort((l, r) => r.ieRatioNormalized - l.ieRatioNormalized);
+    paint(widgets);
     createTable(widgets);
 }
 
@@ -134,10 +155,8 @@ function removeFromTable(widgets) {
 const colors = ['#f5f6f8', '#fff9b2', '#f5d22b', '#ffa75b', '#f38090'];
 const ranges = [0.3, 0.42, 0.57, 0.7, 1];
 
-async function paint() {
+async function paint(widgets) {
     let widgetsToUpdate = [];
-    let widgets = await getAllWidgetsInMatrix();
-    calcIERatio(widgets);
     // update only widgets with a changed color
     widgets.forEach(w => {
         let index = 4;
@@ -152,8 +171,9 @@ async function paint() {
             widgetsToUpdate.push(w);
         }
     });
-
-    await miro.board.widgets.update(widgetsToUpdate);
+    if (widgetsToUpdate.length > 0) {
+        await miro.board.widgets.update(widgetsToUpdate);
+    }
 }
 
 async function exportToColumn() {
