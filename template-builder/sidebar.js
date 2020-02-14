@@ -21,6 +21,21 @@ function onDelete(e) {
     removeFromTable(e.data);
 }
 
+async function findMatrix() {
+    const appId = await miro.clientId();
+    let axises = (await miro.board.widgets.get({type: 'line'}))
+        .filter(w => w.metadata[appId] != null && w.metadata[appId].axis != null);
+    if (axises.length !== 2) {
+        return null;
+    }
+    let result = {};
+    axises.forEach(w => {
+        if (w.metadata[appId].axis === 'horizontal') {
+
+        }
+    })
+}
+
 async function getAllWidgetsInMatrix() {
     let widgets = await miro.board.widgets.get({type: 'sticker'});
     widgets = widgets.filter(w => w.x > 0 && w.x < 1000 && w.y > 0 && w.y < 1000);

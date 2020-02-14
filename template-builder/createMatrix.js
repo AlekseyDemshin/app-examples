@@ -1,3 +1,5 @@
+let appId;
+
 async function createMatrix() {
     const topX = 0;
     const topY = 0;
@@ -11,6 +13,7 @@ async function createMatrix() {
     const rightX = 1000;
     const rightY = 1000;
 
+    appId = await miro.getClientId();
     moveViewPort(-200, -100, rightX + 300, rightY + 300);
     drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, rightX, rightY);
     drawScales(rightX, rightY);
@@ -91,6 +94,11 @@ async function drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, ri
                 lineType: 0,
                 lineStyle: 0,
                 lineThickness: 4
+            },
+            metadata: {
+                appId: {
+                    axis: 'vertical'
+                }
             }
         },{
             type: "line",
@@ -102,6 +110,11 @@ async function drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, ri
                 lineType: 0,
                 lineStyle: 0,
                 lineThickness: 4
+            },
+            metadata: {
+                appId: {
+                    axis: 'horizontal'
+                }
             }
         }]
     );
