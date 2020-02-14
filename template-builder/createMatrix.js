@@ -1,22 +1,63 @@
 let appId;
 
 async function createMatrix() {
-    const topX = 0;
-    const topY = 0;
+    let topX = 0;
+    let topY = 0;
 
-    const zeroVertX = 0;
-    const zeroVertY = 1005;
+    let zeroVertX;
+    let zeroVertY;
 
-    const zeroHorX = -5;
-    const zeroHorY = 1000;
+    let zeroHorX;
+    let zeroHorY;
 
-    const rightX = 1000;
-    const rightY = 1000;
+    let rightX;
+    let rightY;
+
+    let size;
+
+    let selection = await miro.board.selection.get();
+    let viewport = await miro.board.viewport.getViewport();
+    let zoom = await miro.board.viewport.getZoom();
+    if (selection.length > 0) {
+        let first = selection[0].bounds;
+        zeroVertX = first.left;
+        zeroHorY = first.bottom;
+        size = Math.max(first.height, first.width);
+        selection.forEach(w => {
+            if (w.bounds.left < zeroVertX) {
+                zeroVertX = w.bounds.left;
+            }
+            if (w.bounds.bottom > zeroHorY) {
+                zeroHorY = w.bounds.bottom;
+            }
+            let s = Math.max(w.bounds.right - zeroVertX, zeroHorY - w.bounds.top);
+            if (s > size) {
+                size = s;
+            }
+        })
+    } else {
+        size = Math.max(viewport.height, viewport.width);
+        zeroVertX = viewport.x;
+        zeroHorY = viewport.y + viewport.height;
+    }
+
+    zeroVertX-=5;
+    zeroHorY+=5;
+
+    topX = zeroVertX;
+    topY = zeroHorY - size;
+
+    zeroVertY = topY + size + 5;
+    zeroHorX = topX - 5;
+
+    rightX = topX + size + 10;
+    rightY = topY + size;
 
     appId = await miro.getClientId();
-    moveViewPort(-200, -100, rightX + 300, rightY + 300);
-    await drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, rightX, rightY);
-    await drawScales(rightX, rightY);
+    moveViewPort(topX - 200, topY - 100, size + 300, size + 300);
+    console.log(zoom)
+    await drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, rightX, rightY, zoom);
+    await drawScales(topX, topY, rightX, rightY, zoom);
 }
 
 function moveViewPort(x, y, w, h) {
@@ -30,7 +71,8 @@ function moveViewPort(x, y, w, h) {
     )
 }
 
-async function drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, rightX, rightY) {
+async function drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, rightX, rightY, zoom) {
+    console.log(zoom)
     let top = await miro.board.widgets.create(
         {
             type: "shape",
@@ -83,6 +125,7 @@ async function drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, ri
             }
         }
     );
+    let thickness = 4; //Math.ceil(24 * (1.0 - zoom));
     miro.board.widgets.create([
         {
             type: "line",
@@ -93,14 +136,14 @@ async function drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, ri
                 lineStartStyle: 0,
                 lineType: 0,
                 lineStyle: 0,
-                lineThickness: 4
+                lineThickness: thickness
             },
             metadata: {
                 [appId]: {
                     axis: 'vertical'
                 }
             }
-        },{
+        }, {
             type: "line",
             startWidgetId: zeroH[0].id,
             endWidgetId: right[0].id,
@@ -109,7 +152,7 @@ async function drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, ri
                 lineStartStyle: 0,
                 lineType: 0,
                 lineStyle: 0,
-                lineThickness: 4
+                lineThickness: thickness
             },
             metadata: {
                 [appId]: {
@@ -120,7 +163,8 @@ async function drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, ri
     );
 }
 
-function drawScales(rightX, rightY) {
+function drawScales(topX, topY, rightX, rightY, zoom) {
+    const scale = 2;// Math.floor(1 / zoom);
     miro.board.widgets.create([
         {
             type: 'TEXT',
@@ -128,15 +172,15 @@ function drawScales(rightX, rightY) {
             y: rightY + 50,
             text: 'Effort',
             width: 50,
-            scale: 2
+            scale: scale
         },
         {
             type: 'TEXT',
-            x: -50,
-            y: 50,
+            x: topX - 50,
+            y: topY + 50,
             text: 'Impact',
             width: 80,
-            scale: 2,
+            scale: scale,
             rotation: -90
         }]
     );

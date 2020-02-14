@@ -52,6 +52,7 @@ async function findMatrix() {
             result.rightBottom.y = w.bounds.bottom;
         }
     });
+    result.size = result.rightBottom.x - result.leftTop.x;
     return result;
 }
 
@@ -80,8 +81,8 @@ function calcIERatio(matrix, widgets) {
     widgets
         .forEach(w => {
             let distance = ((matrix.rightBottom.y - w.y) - (w.x - matrix.leftTop.x)) / 2; // distance from the widget to the line where impact = effort
-            distance = Math.sqrt(2) * 500 + distance; // distance from the point (x;x) to the right bottom corner
-            distance /= Math.sqrt(2) * 1000; // normalize
+            distance = Math.sqrt(2) * matrix.size / 2 + distance; // distance from the point (x;x) to the right bottom corner
+            distance /= Math.sqrt(2) * matrix.size; // normalize
             w.ieRatioNormalized = distance;
         });
 }
@@ -117,8 +118,7 @@ function createTable(matrix, widgets) {
                 `<span class="stat-list__item-num"><b>${index + 1}.</b> </span>`
                 + `<span class="stat-list__item-name">${w.text}</span>`;
             itemView.onclick = async function () {
-                moveViewPort(matrix.leftTop.x - 200, matrix.leftTop.y - 100,
-                    matrix.rightBottom.x - matrix.leftTop.x + 300, matrix.rightBottom.y - matrix.leftTop.y + 300);
+                moveViewPort(matrix.leftTop.x - 200, matrix.leftTop.y - 100,matrix.size + 300, matrix.size + 300);
                 await miro.board.selection.clear();
                 await miro.board.selection.selectWidgets(w.id);
             };
@@ -206,7 +206,7 @@ async function exportToColumn() {
         calcIERatio(matrix, widgets);
         widgets.sort((l, r) => r.ieRatioNormalized - l.ieRatioNormalized);
 
-        let x = matrix.rightBottom.x + 400;
+        let x = matrix.rightBottom.x + matrix.size * 0.4;
         let y = matrix.leftTop.y + widgets[0].bounds.height / 2;
         let margin = 5;
 
