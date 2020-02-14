@@ -6,7 +6,6 @@ async function init() {
     miro.addListener('WIDGETS_DELETED', onDelete);
 
     let matrix = await findMatrix();
-    console.log(matrix);
     if (matrix == null) {
         drawBuildButton();
     } else {
@@ -53,7 +52,6 @@ async function findMatrix() {
             result.rightBottom.y = w.bounds.bottom;
         }
     });
-    console.log(result);
     return result;
 }
 
