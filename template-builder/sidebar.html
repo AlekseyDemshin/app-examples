@@ -7,17 +7,37 @@
     <script src="https://miro.com/app/static/sdk.1.1.js"></script>
     <script src="createMatrix.js" type="application/javascript"></script>
     <script src="sidebar.js" type="application/javascript"></script>
+    <script src="sideBarButtons.js" type="application/javascript"></script>
+    <style>
+        .sidebar__container {
+            position: relative;
+            min-width: 0;
+            min-height: 0;
+            height: 100%;
+        }
+
+        .sidebar__header {
+            padding: 20px 24px;
+            font-family: Formular, sans-serif;
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        .miro-btn {
+            display: inline;
+            margin-left: 16px;
+        }
+    </style>
 </head>
 
 <body>
-<div class="rtb-sidebar-caption">Impact-effort plugin</div>
-<div id="stat-container" class="stat-list"></div>
-
-<button id="build" class="build-button" onclick="drawTemplate()">Build matrix</button>
-
-<button id="paint" class="build-button" onclick="paint()">Paint</button>
-
-<button id="export" class="build-button" onclick="exportToColumn()">Export to column</button>
-
+<div class="sidebar__container">
+    <div class="sidebar__header">Impact-effort plugin</div>
+    <div class="sidebar__buttons" id="buttons-block"></div>
+    <div id="stat-container" class="stat-list"></div>
+</div>
+<script>
+    drawBuildButton();
+</script>
 </body>
 </html>
