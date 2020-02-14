@@ -71,17 +71,44 @@
             text-align: center;
             color: #000;
         }
+
+        .sidebar__images {
+            height: 100%;
+            overflow: auto;
+        }
+
+        .sidebar__images-item {
+            width: 90%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 16px;
+            text-align: center;
+            font-size: 16px;
+        }
     </style>
 </head>
 
 <body>
-
 <canvas id="c" hidden="true"></canvas>
-
-<div class="sidebar__container">
+<div class="sidebar__container" id="root-element">
     <div class="sidebar__header">Priority matrix</div>
     <div class="sidebar__buttons" id="buttons-block"></div>
-    <div id="stat-container" class="stat-list"></div>
+    <div class="sidebar__images" id="images-container">
+        <div class="sidebar-list-item__border"></div>
+        <img class="sidebar__images-item" src="images/25_Bang_for_the_buck.svg"/>
+        <div class="sidebar__images-item">Bang for the Buck Template</div>
+        <div class="sidebar-list-item__border"></div>
+        <img class="sidebar__images-item" src="images/Fibonacci_scale.svg"/>
+        <div class="sidebar__images-item">Fibonacci Scale Template</div>
+        <div class="sidebar-list-item__border"></div>
+        <img class="sidebar__images-item" src="images/t-impacteffortmatrix.svg"/>
+        <div class="sidebar__images-item">Impact effort matrix</div>
+        <div class="sidebar-list-item__border"></div>
+        <img class="sidebar__images-item" src="images/t-costbenefitanalysis.svg"/>
+        <div class="sidebar__images-item">Cost Benefit Analysis Template</div>
+        <div class="sidebar-list-item__border"></div>
+    </div>
 </div>
 </body>
 </html>

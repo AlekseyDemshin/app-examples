@@ -89,7 +89,19 @@ function calcIERatio(matrix, widgets) {
 }
 
 function createTable(matrix, widgets) {
-    const container = document.getElementById("stat-container");
+    let container = document.getElementById("stat-container");
+    if (!container) {
+        addElement(
+            'root-element',
+            'div',
+            'stat-container',
+            'stat-list',
+            '',
+            ''
+        );
+        container = document.getElementById("stat-container");
+        deleteElement('images-container');
+    }
     // clear old
     while (container.firstChild) {
         container.removeChild(container.firstChild);

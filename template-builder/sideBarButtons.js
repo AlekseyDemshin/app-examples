@@ -34,10 +34,17 @@ function drawBuildButton() {
 }
 
 async function onClick() {
-    console.log('click')
+    deleteElement('images-container');
+    addElement(
+        'root-element',
+        'div',
+        'stat-container',
+        'stat-list',
+        '',
+        ''
+    );
     await drawTemplate();
     deleteElement("build");
-    console.log('delete build');
     drawExportButton()
 }
 
