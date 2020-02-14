@@ -3,7 +3,8 @@ miro.onReady(() => {
     miro.addListener('WIDGETS_TRANSFORMATION_UPDATED', onCreateOrUpdate);
     miro.addListener('WIDGETS_DELETED', onDelete);
 
-    refreshAll();
+    // hack to control changes of content (text) and changes from other clients
+    setInterval(refreshAll, 1000);
 });
 
 function drawTemplate() {
@@ -81,8 +82,6 @@ function createTable(widgets) {
 }
 
 function removeFromTable(widgets) {
-    // const container = document.getElementById("stat-container");
-    // const statView = container.getElementById("stat-list__table");
     widgets.forEach(w => {
             let item = document.getElementById("stat-list__item_" + w.id);
             if (item != null) {
