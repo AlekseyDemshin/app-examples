@@ -66,11 +66,13 @@ function createTable(widgets) {
         emptyView.innerText = "Looks like the matrix is empty. Drag stickers into it";
         statView.appendChild(emptyView);
     } else {
-        widgets.forEach(w => {
+        widgets.forEach((w, index) => {
             let itemView = document.createElement("div");
             itemView.id = "stat-list__item_" + w.id;
             itemView.className = "stat-list__item";
-            itemView.innerHTML = `<span class="stat-list__item-name">${w.text} | </span>`
+            itemView.innerHTML =
+                `<span class="stat-list__item-num">${index + 1} | </span>`
+                + `<span class="stat-list__item-name">${w.text} | </span>`
                 + `<span class="stat-list__item-value">${w.ieRatioNormalized}</span>`;
             itemView.onclick = function () {
                 miro.board.selection.clear();
@@ -84,10 +86,12 @@ function createTable(widgets) {
 }
 
 function removeFromTable(widgets) {
+    let changed = false;
     widgets.forEach(w => {
             let item = document.getElementById("stat-list__item_" + w.id);
             if (item != null) {
                 item.remove();
+                changed = true;
             }
         }
     );
@@ -99,6 +103,15 @@ function removeFromTable(widgets) {
         emptyView.className = "stat-list__empty";
         emptyView.innerText = "Looks like the matrix is empty. Drag stickers into it";
         statView.appendChild(emptyView);
+    } else {
+        if (changed) {
+            let num = 1;
+            let items = statView.getElementsByClassName("stat-list__item");
+            Array.from(items).forEach(item => {
+                let numElem = item.getElementsByClassName("stat-list__item-num");
+                numElem.item(0).value = num;
+            });
+        }
     }
 }
 
