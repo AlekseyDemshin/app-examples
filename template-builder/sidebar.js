@@ -74,10 +74,10 @@ function createTable(widgets) {
                 `<span class="stat-list__item-num">${index + 1} | </span>`
                 + `<span class="stat-list__item-name">${w.text} | </span>`
                 + `<span class="stat-list__item-value">${w.ieRatioNormalized}</span>`;
-            itemView.onclick = function () {
-                miro.board.selection.clear();
-                miro.board.selection.selectWidgets(w.id);
-                moveViewPort(-200, -100, 1300, 1300)
+            itemView.onclick = async function () {
+                moveViewPort(-200, -100, 1300, 1300);
+                await miro.board.selection.clear();
+                await miro.board.selection.selectWidgets(w.id);
             };
             statView.appendChild(itemView)
         })
