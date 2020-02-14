@@ -15,8 +15,8 @@ async function createMatrix() {
 
     appId = await miro.getClientId();
     moveViewPort(-200, -100, rightX + 300, rightY + 300);
-    drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, rightX, rightY);
-    drawScales(rightX, rightY);
+    await drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, rightX, rightY);
+    await drawScales(rightX, rightY);
 }
 
 function moveViewPort(x, y, w, h) {

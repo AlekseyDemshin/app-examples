@@ -10,33 +10,35 @@ function addElement(parentId, elementTag, elementId, elementClass, func, html) {
 
 function deleteElement(elementId) {
     let element = document.getElementById(elementId);
-    element.parentNode.removeChild(element);
-}
-
-function drawPaint() {
-    deleteElement('build');
+    if (element) {
+        element.parentNode.removeChild(element);
+        return true;
+    }
+    return false;
 }
 
 function drawBuildButton() {
-    let onClick = 'drawTemplate(); deleteElement("build"); /*drawPaintButton();*/ drawExportButton()';
+    if (document.getElementById("build")) {
+        return;
+    }
+    deleteElement("export");
+    deleteElement("stat-list__table");
     addElement(
         'buttons-block',
         'button',
         'build',
         'miro-btn miro-btn--primary miro-btn--medium',
-        onClick,
+        'onClick()',
         'BuildMatrix'
     );
 }
 
-function drawPaintButton() {
-    addElement(
-        'buttons-block',
-        'button',
-        'paint',
-        'miro-btn miro-btn--primary miro-btn--medium',
-        'paint()',
-        'Paint');
+async function onClick() {
+    console.log('click')
+    await drawTemplate();
+    deleteElement("build");
+    console.log('delete build');
+    drawExportButton()
 }
 
 function drawExportButton() {
