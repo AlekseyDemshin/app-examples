@@ -124,7 +124,7 @@ function createTable(matrix, widgets) {
                 await miro.board.selection.clear();
                 await miro.board.selection.selectWidgets(w.id);
             };
-            statView.appendChild(itemView)
+            statView.appendChild(itemView);
             itemViewIds.push(itemView.id)
         })
     }
