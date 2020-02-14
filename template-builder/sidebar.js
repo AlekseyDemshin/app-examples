@@ -3,6 +3,8 @@ miro.onReady(() => {
     miro.addListener('WIDGETS_TRANSFORMATION_UPDATED', onCreateOrUpdate);
     miro.addListener('WIDGETS_DELETED', onDelete);
 
+    refreshAll();
+
     // hack to control changes of content (text) and changes from other clients
     setInterval(refreshAll, 1000);
 });
