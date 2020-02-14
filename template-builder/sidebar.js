@@ -141,3 +141,24 @@ async function paint() {
     await miro.board.widgets.update(widgetsToUpdate);
 }
 
+async function exportToColumn() {
+    let widgets = await getAllWidgetsInMatrix();
+    if (widgets.length > 0) {
+        calcIERatio(widgets);
+        widgets.sort((l, r) => r.ieRatioNormalized - l.ieRatioNormalized);
+
+        let x = 1400 - widgets[0].bounds.height/2;
+        let y = 0;
+        let margin = 5;
+
+        widgets.forEach(w => {
+            w.id = null;
+            w.x = x;
+            w.y = y;
+            y += w.bounds.height + margin;
+        });
+
+        await miro.board.widgets.create(widgets);
+    }
+}
+
