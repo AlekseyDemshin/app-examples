@@ -12,8 +12,8 @@ async function createMatrix() {
     const rightY = 1000;
 
     moveViewPort(-200, -100, rightX + 300, rightY + 300);
-    drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, rightX, rightY)
-    drawScales(rightX, rightY)
+    drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, rightX, rightY);
+    drawScales(rightX, rightY);
 }
 
 function moveViewPort(x, y, w, h) {
@@ -80,7 +80,7 @@ async function drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, ri
             }
         }
     );
-    let verLine = miro.board.widgets.create(
+    miro.board.widgets.create([
         {
             type: "line",
             startWidgetId: zeroV[0].id,
@@ -92,10 +92,7 @@ async function drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, ri
                 lineStyle: 0,
                 lineThickness: 4
             }
-        }
-    );
-    let horLine = miro.board.widgets.create(
-        {
+        },{
             type: "line",
             startWidgetId: zeroH[0].id,
             endWidgetId: right[0].id,
@@ -106,12 +103,12 @@ async function drawAxis(topX, topY, zeroVertX, zeroVertY, zeroHorX, zeroHorY, ri
                 lineStyle: 0,
                 lineThickness: 4
             }
-        }
+        }]
     );
 }
 
-async function drawScales(rightX, rightY) {
-    miro.board.widgets.create(
+function drawScales(rightX, rightY) {
+    miro.board.widgets.create([
         {
             type: 'TEXT',
             x: rightX - 50,
@@ -119,9 +116,7 @@ async function drawScales(rightX, rightY) {
             text: 'Effort',
             width: 50,
             scale: 2
-        }
-    );
-    miro.board.widgets.create(
+        },
         {
             type: 'TEXT',
             x: -50,
@@ -130,6 +125,6 @@ async function drawScales(rightX, rightY) {
             width: 80,
             scale: 2,
             rotation: -90
-        }
+        }]
     );
 }
